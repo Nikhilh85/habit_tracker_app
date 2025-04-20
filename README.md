@@ -35,5 +35,8 @@ Note - To run locally ensure you have Expo CLI installed: npm install -g expo-cl
 
 3. Creat/Edit Habit
 ![WhatsApp Image 2025-04-20 at 8 49 53 PM](https://github.com/user-attachments/assets/53cf7d49-5def-48de-a162-619a3c394391)
+![WhatsApp Image 2025-04-20 at 9 34 02 PM](https://github.com/user-attachments/assets/f04bdada-e996-4838-ac85-2e5ddcaa7365)
 ![WhatsApp Image 2025-04-20 at 8 49 54 PM](https://github.com/user-attachments/assets/13a14d96-57d3-4a1e-b643-1e3baf7cc55e)
+
+Release APK - https://github.com/Nikhilh85/habit_tracker_app/releases/download/release/habit_tracker.apk
 
