@@ -136,14 +136,16 @@ const HabitForm = ({ navigation }) => {
 
       <Modal visible={emojiModalVisible} transparent animationType="slide">
         <View style={styles.overlay}>
-          <View style={styles.modal}>
-            <EmojiModal
-              onEmojiSelected={(emoji) => {
-                setEmoji(emoji);
-                setEmojiModalVisible(false);
-              }}
-            />
-          </View>
+          <EmojiModal
+            onPressOutside={() => {
+              setEmojiModalVisible(false);
+            }}
+            columns={9}
+            onEmojiSelected={(emoji) => {
+              setEmojiModalVisible(false);
+              setEmoji(emoji);
+            }}
+          />
         </View>
       </Modal>
     </ScrollView>
@@ -200,16 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: "#00000099",
-    justifyContent: "center",
-    padding: 20,
-  },
-  modal: {
-    borderRadius: 12,
-    padding: 10,
-  },
+  overlay: { flex: 1 },
 });
 
 export default HabitForm;

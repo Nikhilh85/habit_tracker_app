@@ -14,8 +14,9 @@ export const updateHabitNotification = async (habitId, habit) => {
       body: `Time to ${habit.name}`,
     },
     trigger: {
-      hour,
-      minute,
+      hour: hour,
+      minute: minute,
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
       repeats: true,
     },
   });

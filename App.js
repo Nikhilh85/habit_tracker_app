@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Provider as PaperProvider } from "react-native-paper";
+import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 
 import Dashboard from "./src/screens/Dashboard";
 import Planner from "./src/screens/Planner";
@@ -31,8 +31,8 @@ const App = () => {
   }, []);
 
   return (
-    <PaperProvider>
-      <NavigationContainer>
+    <PaperProvider theme={DefaultTheme}>
+      <NavigationContainer theme={DefaultTheme}>
         <Stack.Navigator initialRouteName="Dashboard">
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="Planner" component={Planner} />

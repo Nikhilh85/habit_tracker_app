@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -32,16 +33,18 @@ const Planner = ({ navigation }) => {
   const [habits, setHabits] = useState([]);
   const [habitStatus, setHabitStatus] = useState({});
 
-  useEffect(() => {
-    const fetchHabits = async () => {
-      const data = await getHabits();
-      const habitStatus = await getHabitStatus();
-      setHabits(data);
-      setHabitStatus(habitStatus);
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchHabits = async () => {
+        const data = await getHabits();
+        const habitStatus = await getHabitStatus();
+        setHabits(data);
+        setHabitStatus(habitStatus);
+      };
 
-    fetchHabits();
-  }, []);
+      fetchHabits();
+    }, [])
+  );
 
   useEffect(() => {
     setWeekDays(getWeekDays(weekOffset));
@@ -57,7 +60,7 @@ const Planner = ({ navigation }) => {
 
     setHabitStatus(newStatus);
 
-    await saveHabitStatus(key, status, newStatus);
+    await saveHabitStatus(newStatus);
   };
 
   const handleDeleteHabit = async (habitId) => {

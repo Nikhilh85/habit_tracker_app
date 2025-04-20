@@ -30,7 +30,7 @@ export const clearHabitsAndStatus = async () => {
   }
 };
 
-export const saveHabitStatus = async (key, status, newStatus) => {
+export const saveHabitStatus = async (newStatus) => {
   try {
     await AsyncStorage.setItem(HABITS_STATUS, JSON.stringify(newStatus));
   } catch (e) {
