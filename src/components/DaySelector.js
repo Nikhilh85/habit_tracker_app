@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const days = ["S", "M", "T", "W", "T", "F", "S"];
-const fullDays = [
+export const fullDays = [
   "Sunday",
   "Monday",
   "Tuesday",

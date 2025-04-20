@@ -36,7 +36,7 @@ const App = () => {
         <Stack.Navigator initialRouteName="Dashboard">
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="Planner" component={Planner} />
-          <Stack.Screen name="HabitForm" component={HabitForm} />
+          <Stack.Screen name="Habit Form" component={HabitForm} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>

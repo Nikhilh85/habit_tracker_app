@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,25 +9,53 @@ import {
   ScrollView,
 } from "react-native";
 import EmojiModal from "react-native-emoji-modal";
+import { useRoute } from "@react-navigation/native";
 import DaySelector from "../components/DaySelector";
 import RepeatFrequencySelector from "../components/RepeatFrequencySelector";
-import { saveHabit } from "../utils/storage";
-import { scheduleHabitNotification } from "../utils/notifications";
+import { getHabits, saveHabit } from "../utils/storage";
+import { updateHabitNotification } from "../utils/notifications";
 import ReminderTimePicker from "../components/ReminderTimePicker";
 
-const HabitForm = ({}) => {
+const HabitForm = ({ navigation }) => {
+  const route = useRoute();
+
   const [habitName, setHabitName] = useState("");
   const [emoji, setEmoji] = useState("");
   const [emojiModalVisible, setEmojiModalVisible] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [repeatFrequency, setRepeatFrequency] = useState("Weekly");
   const [reminderTime, setReminderTime] = useState(new Date());
+  const [editingHabitId, setEditingHabitId] = useState(null);
+
+  const parseTimeStringToDate = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    return date;
+  };
+
+  useEffect(() => {
+    if (route.params?.habitToEdit) {
+      const h = route.params.habitToEdit;
+      setHabitName(h.name);
+      setEmoji(h.icon);
+      setSelectedDays(h.days);
+      setRepeatFrequency(h.repeat);
+      setReminderTime(parseTimeStringToDate(h.time));
+      setEditingHabitId(h.id);
+    }
+  }, [route.params]);
 
   const handleSave = async () => {
     if (!habitName || !emoji || selectedDays.length === 0) {
       alert("Please fill in all fields");
       return;
     }
+
+    const habits = await getHabits();
 
     const timeStr = `${reminderTime
       .getHours()
@@ -44,18 +72,28 @@ const HabitForm = ({}) => {
       days: selectedDays,
       repeat: repeatFrequency,
       time: timeStr,
+      createdAt: new Date().toISOString(),
     };
 
-    const notificationId = await scheduleHabitNotification(newHabit);
-    newHabit.notificationId = notificationId;
-
-    await saveHabit(newHabit);
-    alert("Habit Saved with Reminder!");
+    let updated;
+    if (editingHabitId) {
+      updated = habits.map((h) => (h.id === editingHabitId ? newHabit : h));
+      await updateHabitNotification(editingHabitId, newHabit);
+    } else {
+      updated = [...habits, newHabit];
+    }
+    await saveHabit(updated);
+    if (!editingHabitId) await updateHabitNotification(newHabit.id, newHabit);
+    navigation.goBack();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Create New Habit</Text>
+      {editingHabitId ? (
+        <Text style={styles.title}>Edit Habit</Text>
+      ) : (
+        <Text style={styles.title}>Create New Habit</Text>
+      )}
 
       <Text style={styles.label}>Habit Name</Text>
       <TextInput

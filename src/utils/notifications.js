@@ -1,36 +1,39 @@
 import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const scheduleHabitNotification = async (habit) => {
+const HABIT_NOTIFY = "HABIT_NOTIFY";
+
+export const updateHabitNotification = async (habitId, habit) => {
+  await cancelHabitNotification(habitId);
+
   const [hour, minute] = habit.time.split(":").map(Number);
 
-  const trigger = {
-    hour,
-    minute,
-    repeats: true,
-  };
+  const notifId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: `Reminder: ${habit.name}`,
+      body: `Time to ${habit.name}`,
+    },
+    trigger: {
+      hour,
+      minute,
+      repeats: true,
+    },
+  });
 
-  const content = {
-    title: `${habit.name}`,
-    body: `It's time for your habit!`,
-    sound: true,
-  };
-
-  try {
-    const notificationId = await Notifications.scheduleNotificationAsync({
-      content,
-      trigger,
-    });
-    return notificationId;
-  } catch (error) {
-    console.error("Error scheduling notification:", error);
-    return null;
-  }
+  const notifs = await AsyncStorage.getItem(HABIT_NOTIFY);
+  const notifMap = notifs ? JSON.parse(notifs) : {};
+  notifMap[habitId] = notifId;
+  await AsyncStorage.setItem(HABIT_NOTIFY, JSON.stringify(notifMap));
 };
 
-export const cancelHabitNotification = async (notificationId) => {
-  try {
-    await Notifications.cancelScheduledNotificationAsync(notificationId);
-  } catch (error) {
-    console.error("Error cancelling notification:", error);
+export const cancelHabitNotification = async (habitId) => {
+  const notifs = await AsyncStorage.getItem(HABIT_NOTIFY);
+  const notifMap = notifs ? JSON.parse(notifs) : {};
+  const notifId = notifMap[habitId];
+
+  if (notifId) {
+    await Notifications.cancelScheduledNotificationAsync(notifId);
+    delete notifMap[habitId];
+    await AsyncStorage.setItem(HABIT_NOTIFY, JSON.stringify(notifMap));
   }
 };
